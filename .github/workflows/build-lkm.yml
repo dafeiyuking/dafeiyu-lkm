@@ -1,14 +1,11 @@
 name: Build DaFeiYu KSU LKM
 
-# 用我们的证书哈希重编 kernelsu.ko。
-# 用法：仓库 → Actions → 左边选 "Build DaFeiYu KSU LKM" → Run workflow → 等 10 分钟 → 下载 Artifacts。
-
+# 鐢ㄦ垜浠殑璇佷功鍝堝笇閲嶇紪 kernelsu.ko銆?# 鐢ㄦ硶锛氫粨搴?鈫?Actions 鈫?宸﹁竟閫?"Build DaFeiYu KSU LKM" 鈫?Run workflow 鈫?绛?10 鍒嗛挓 鈫?涓嬭浇 Artifacts銆?
 on:
   workflow_dispatch:
 
 env:
-  # 大肥鱼King 管理器证书：887 字节 (0x377)，SHA-256 如下。改这里必须同时重签 APK。
-  KSU_EXPECTED_SIZE: "0x0377"
+  # 澶ц偉楸糑ing 绠＄悊鍣ㄨ瘉涔︼細887 瀛楄妭 (0x377)锛孲HA-256 濡備笅銆傛敼杩欓噷蹇呴』鍚屾椂閲嶇 APK銆?  KSU_EXPECTED_SIZE: "0x0377"
   KSU_EXPECTED_HASH: "0cdac17eefa293ae16bcd9ccf0b6d5c358aa35751f6a47f7cf214021d16190d0"
   KSU_MANAGER_PACKAGE: "com.dafeiyu.king"
 
@@ -20,6 +17,11 @@ jobs:
       fail-fast: false
       matrix:
         kmi:
+          - android12-5.10
+          - android13-5.10
+          - android13-5.15
+          - android14-5.15
+          - android14-6.1
           - android15-6.6
           - android16-6.12
           - android17-6.18
