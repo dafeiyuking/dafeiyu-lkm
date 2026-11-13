@@ -1,11 +1,15 @@
 name: Build DaFeiYu KSU LKM
 
-# 鐢ㄦ垜浠殑璇佷功鍝堝笇閲嶇紪 kernelsu.ko銆?# 鐢ㄦ硶锛氫粨搴?鈫?Actions 鈫?宸﹁竟閫?"Build DaFeiYu KSU LKM" 鈫?Run workflow 鈫?绛?10 鍒嗛挓 鈫?涓嬭浇 Artifacts銆?
+# Rebuild kernelsu.ko with our manager cert hash.
+# Usage: Actions -> "Build DaFeiYu KSU LKM" -> Run workflow -> download Artifacts.
+
 on:
   workflow_dispatch:
 
 env:
-  # 澶ц偉楸糑ing 绠＄悊鍣ㄨ瘉涔︼細887 瀛楄妭 (0x377)锛孲HA-256 濡備笅銆傛敼杩欓噷蹇呴』鍚屾椂閲嶇 APK銆?  KSU_EXPECTED_SIZE: "0x0377"
+  # DaFeiYuKing manager cert: 887 bytes (0x377).
+  # If you re-sign the APK, update SIZE/HASH here and rebuild.
+  KSU_EXPECTED_SIZE: "0x0377"
   KSU_EXPECTED_HASH: "0cdac17eefa293ae16bcd9ccf0b6d5c358aa35751f6a47f7cf214021d16190d0"
   KSU_MANAGER_PACKAGE: "com.dafeiyu.king"
 
