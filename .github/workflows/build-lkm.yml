@@ -1,0 +1,62 @@
+name: Build DaFeiYu KSU LKM
+
+# 用我们的证书哈希重编 kernelsu.ko。
+# 用法：仓库 → Actions → 左边选 "Build DaFeiYu KSU LKM" → Run workflow → 等 10 分钟 → 下载 Artifacts。
+
+on:
+  workflow_dispatch:
+
+env:
+  # 大肥鱼King 管理器证书：887 字节 (0x377)，SHA-256 如下。改这里必须同时重签 APK。
+  KSU_EXPECTED_SIZE: "0x0377"
+  KSU_EXPECTED_HASH: "0cdac17eefa293ae16bcd9ccf0b6d5c358aa35751f6a47f7cf214021d16190d0"
+  KSU_MANAGER_PACKAGE: "com.dafeiyu.king"
+
+jobs:
+  build:
+    name: Build kernelsu.ko (${{ matrix.kmi }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        kmi:
+          - android15-6.6
+          - android16-6.12
+          - android17-6.18
+    container:
+      image: ghcr.io/ylarod/ddk-min:${{ matrix.kmi }}-20260828
+      options: --privileged
+
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v4
+
+      - name: Unpack kernel source
+        run: |
+          if command -v unzip >/dev/null 2>&1; then
+            unzip -q lkm-kernel.zip
+          else
+            python3 -m zipfile -e lkm-kernel.zip .
+          fi
+          ls kernel | head
+
+      - name: Build kernelsu.ko
+        run: |
+          cd kernel
+          CONFIG_KSU=m CC=clang make \
+            KSU_VERSION=72164 \
+            KSU_VERSION_FULL="v4.1.0-2c68261c@DaFeiYu" \
+            KSU_EXPECTED_SIZE="$KSU_EXPECTED_SIZE" \
+            KSU_EXPECTED_HASH="$KSU_EXPECTED_HASH" \
+            KSU_MANAGER_PACKAGE="$KSU_MANAGER_PACKAGE"
+
+          OUT="$GITHUB_WORKSPACE/kernelsu-${{ matrix.kmi }}-dafeiyu.ko"
+          cp kernelsu.ko "$OUT"
+          llvm-strip -d "$OUT" || true
+          ls -lh "$OUT"
+
+      - name: Upload kernelsu.ko
+        uses: actions/upload-artifact@v4
+        with:
+          name: kernelsu-${{ matrix.kmi }}-dafeiyu
+          path: kernelsu-${{ matrix.kmi }}-dafeiyu.ko
