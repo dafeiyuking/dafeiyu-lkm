@@ -1,17 +1,17 @@
 name: Build DaFeiYu KSU LKM
 
-# Rebuild kernelsu.ko with our manager cert hash.
+# Build kernelsu.ko (upstream KernelSU v3.3.1 kernel module) with our manager cert hash.
 # Usage: Actions -> "Build DaFeiYu KSU LKM" -> Run workflow -> download Artifacts.
 
 on:
   workflow_dispatch:
 
 env:
-  # DaFeiYuKing manager cert: 887 bytes (0x377).
-  # If you re-sign the APK, update SIZE/HASH here and rebuild.
+  # DaFeiYuKing manager cert: 887 bytes (0x377)
   KSU_EXPECTED_SIZE: "0x0377"
   KSU_EXPECTED_HASH: "0cdac17eefa293ae16bcd9ccf0b6d5c358aa35751f6a47f7cf214021d16190d0"
-  KSU_MANAGER_PACKAGE: "com.dafeiyu.king"
+  KSU_MANAGER_PACKAGE: "me.weishu.kernelsu"
+  KSU_VERSION: "32680"
 
 jobs:
   build:
@@ -50,8 +50,8 @@ jobs:
         run: |
           cd kernel
           CONFIG_KSU=m CC=clang make \
-            KSU_VERSION=72164 \
-            KSU_VERSION_FULL="v4.1.0-2c68261c@DaFeiYu" \
+            KSU_VERSION="$KSU_VERSION" \
+            KSU_VERSION_FULL="v3.3.1-dafeiyu" \
             KSU_EXPECTED_SIZE="$KSU_EXPECTED_SIZE" \
             KSU_EXPECTED_HASH="$KSU_EXPECTED_HASH" \
             KSU_MANAGER_PACKAGE="$KSU_MANAGER_PACKAGE"
