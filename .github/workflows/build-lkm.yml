@@ -46,6 +46,10 @@ jobs:
           fi
           ls kernel | head
 
+      - name: Fix KSU version fallback
+        run: |
+          sed -i 's/^ccflags-y += -DKSU_VERSION=16$/KSU_VERSION ?= 32680\nccflags-y += -DKSU_VERSION=$(KSU_VERSION)/' kernel/Kbuild
+          grep -n 'KSU_VERSION' kernel/Kbuild | head
       - name: Build kernelsu.ko
         run: |
           cd kernel
