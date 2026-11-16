@@ -49,7 +49,7 @@ jobs:
           KSU_PACKAGE_NAME: com.dfyking
         run: |
           cd src/userspace/ksud
-          cargo ndk -t arm64-v8a -p 31 build --release
+          cargo ndk -t arm64-v8a --platform 31 build --release
           cp target/aarch64-linux-android/release/ksud /tmp/libksud.so
           ls -lh /tmp/libksud.so
 
