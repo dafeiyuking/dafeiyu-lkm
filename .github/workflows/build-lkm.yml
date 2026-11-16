@@ -10,7 +10,7 @@ env:
   # DaFeiYuKing manager cert: 887 bytes (0x377)
   KSU_EXPECTED_SIZE: "0x0377"
   KSU_EXPECTED_HASH: "0cdac17eefa293ae16bcd9ccf0b6d5c358aa35751f6a47f7cf214021d16190d0"
-  KSU_MANAGER_PACKAGE: "me.weishu.kernelsu"
+  KSU_MANAGER_PACKAGE: "com.dfyking"
   KSU_VERSION: "32680"
 
 jobs:
