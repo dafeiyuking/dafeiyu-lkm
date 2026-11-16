@@ -1,0 +1,60 @@
+name: Build DaFeiYu ksud (v3.3.1)
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout assets
+        uses: actions/checkout@v4
+        with:
+          path: assets
+
+      - name: Checkout KernelSU v3.3.1
+        uses: actions/checkout@v4
+        with:
+          repository: tiann/KernelSU
+          ref: v3.3.1
+          path: src
+          fetch-depth: 0
+
+      - name: Install build tools
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y clang llvm libclang-dev
+
+      - name: Setup Rust
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: aarch64-linux-android
+
+      - name: Setup Android NDK
+        uses: nttld/setup-ndk@v1
+        with:
+          ndk-version: r29
+          add-to-path: true
+
+      - name: Install cargo-ndk
+        run: cargo install cargo-ndk --locked
+
+      - name: Embed our LKMs
+        run: |
+          cp assets/ksud-assets/*_kernelsu.ko src/userspace/ksud/bin/aarch64/
+          ls -lh src/userspace/ksud/bin/aarch64/*_kernelsu.ko
+
+      - name: Build ksud
+        env:
+          KSU_PACKAGE_NAME: com.dfyking
+        run: |
+          cd src/userspace/ksud
+          cargo ndk -t arm64-v8a build --release
+          cp target/aarch64-linux-android/release/ksud /tmp/libksud.so
+          ls -lh /tmp/libksud.so
+
+      - name: Upload libksud.so
+        uses: actions/upload-artifact@v4
+        with:
+          name: libksud-v331-com.dfyking
+          path: /tmp/libksud.so
