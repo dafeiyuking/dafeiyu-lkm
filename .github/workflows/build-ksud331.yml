@@ -39,6 +39,15 @@ jobs:
       - name: Install cargo-ndk
         run: cargo install cargo-ndk --locked
 
+      - name: Build ksuinit
+        env:
+          CARGO_TARGET_DIR: /tmp/ksud-target
+        run: |
+          cd src
+          cargo ndk -t arm64-v8a --platform 31 build --release -p ksuinit
+          cp /tmp/ksud-target/aarch64-linux-android/release/ksuinit userspace/ksud/bin/aarch64/ksuinit
+          ls -lh userspace/ksud/bin/aarch64/ksuinit
+
       - name: Embed our LKMs
         run: |
           cp assets/ksud-assets/*_kernelsu.ko src/userspace/ksud/bin/aarch64/
